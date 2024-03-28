@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>jh.cwebp</groupId>
+    <artifactId>jh-cwebp-modules</artifactId>
+    <packaging>pom</packaging>
+    <properties>
+        <!--        properties-->
+    </properties>
+
+    <version>1.0</version>
+
+    <name>JH-cwebp master project</name>
+    <description>JH-cwebp master project</description>
+    <url>https://github.com/JihedHmida</url>
+
+    <licenses>
+        <license>
+            <name>GPL-v3.0</name>
+            <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Jihed Hmida</name>
+            <email>jihed.hmida@gmail.com</email>
+            <organizationUrl>https://github.com/JihedHmida</organizationUrl>
+        </developer>
+
+    </developers>
+
+    <modules>
+        <module>jh-java-wepb</module>
+        <module>jh-java-wepb-nativebin-win64</module>
+    </modules>
+</project>
