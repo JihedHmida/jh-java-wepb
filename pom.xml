@@ -33,5 +33,6 @@
     <modules>
         <module>jh-java-wepb</module>
         <module>jh-java-wepb-nativebin-win64</module>
+        <module>jh-java-wepb-nativebin-linux64</module>
     </modules>
 </project>
