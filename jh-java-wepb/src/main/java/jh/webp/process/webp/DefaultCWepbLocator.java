@@ -23,31 +23,30 @@ public class DefaultCWepbLocator implements ProcessLocator {
         boolean isWindows = os.contains("windows");
         boolean isMac = os.contains("mac");
 
-        LOG.info("Os name is <{}> isWindows: {} isMac: {}", os, isWindows, isMac);
+        LOG.debug("Os name is <{}> isWindows: {} isMac: {}", os, isWindows, isMac);
         File dirFolder = new File(System.getProperty("java.io.tmpdir"), "jave/");
 
         if (!dirFolder.exists()) {
-            LOG.info("Creating jave temp folder to place executables in <{}>", dirFolder.getAbsolutePath());
+            LOG.debug("Creating jave temp folder to place executables in <{}>", dirFolder.getAbsolutePath());
             dirFolder.mkdirs();
         } else {
-            LOG.info("Jave temp folder exists in <{}>", dirFolder.getAbsolutePath());
+            LOG.debug("Jave temp folder exists in <{}>", dirFolder.getAbsolutePath());
         }
 
         String suffix = isWindows ? ".exe" : (isMac ? "-osx" : "");
         String arch = System.getProperty("os.arch");
         File cwebpFile = new File(dirFolder, LIB_NAME + arch + suffix);
 
-        LOG.info("Executable path: {}", cwebpFile.getAbsolutePath());
+        LOG.debug("Executable path: {}", cwebpFile.getAbsolutePath());
+
         synchronized (DefaultCWepbLocator.class) {
             if (cwebpFile.exists()) {
-                // OK, already present
-                LOG.info("Executable exists in <{}>", cwebpFile.getAbsolutePath());
+                LOG.debug("Executable exists in <{}>", cwebpFile.getAbsolutePath());
             } else {
-                LOG.info("Need to copy executable to <{}>", cwebpFile.getAbsolutePath());
+                LOG.debug("Need to copy executable to <{}>", cwebpFile.getAbsolutePath());
                 copyFile(LIB_NAME + arch + suffix, cwebpFile);
             }
 
-            // Need a chmod?
             if (!isWindows) {
                 try {
                     Runtime.getRuntime().exec(new String[]{"/bin/chmod", "755", cwebpFile.getAbsolutePath()});
@@ -74,51 +73,59 @@ public class DefaultCWepbLocator implements ProcessLocator {
 
         String resourceName = "nativebin/" + path;
 
-        LOG.info("Copy from resource <{}> to target <{}>", resourceName, dest.getAbsolutePath());
+        try {
 
-        InputStream is = getClass().getResourceAsStream(resourceName);
-        if (is == null) {
-            // Use this for Java 9+ only if required
-            resourceName = LIB_PATH + path;
-            LOG.info(
-                    "Alternative copy from SystemResourceAsStream <{}> to target <{}>",
-                    resourceName,
-                    dest.getAbsolutePath());
-            is = ClassLoader.getSystemResourceAsStream(resourceName);
+            LOG.debug("Copy from resource <{}> to target <{}>", resourceName, dest.getAbsolutePath());
+
+            InputStream is = getClass().getResourceAsStream(resourceName);
+            if (is == null) {
+                // Use this for Java 9+ only if required
+                resourceName = LIB_PATH + path;
+                LOG.debug(
+                        "Alternative copy from SystemResourceAsStream <{}> to target <{}>",
+                        resourceName,
+                        dest.getAbsolutePath());
+                is = ClassLoader.getSystemResourceAsStream(resourceName);
 
 
-        }
+            }
 
-        if (is == null) {
-            // Use this for spring boot with different class loaders
-            resourceName = LIB_PATH + path;
-            LOG.debug(
-                    "Alternative copy from Thread.currentThread().getContextClassLoader() <{}> to target <{}>",
-                    resourceName,
-                    dest.getAbsolutePath());
-            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-            is = classloader.getResourceAsStream(resourceName);
-        }
+            if (is == null) {
+                // Use this for spring boot with different class loaders
+                resourceName = LIB_PATH + path;
+                LOG.debug(
+                        "Alternative copy from Thread.currentThread().getContextClassLoader() <{}> to target <{}>",
+                        resourceName,
+                        dest.getAbsolutePath());
+                ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+                is = classloader.getResourceAsStream(resourceName);
+            }
 
-        if (is != null) {
-            if (copy(is, dest.getAbsolutePath())) {
-                if (dest.exists()) {
-                    LOG.debug("Target <{}> exists", dest.getAbsolutePath());
+            if (is != null) {
+                if (copy(is, dest.getAbsolutePath())) {
+                    if (dest.exists()) {
+                        LOG.debug("Target <{}> exists", dest.getAbsolutePath());
+                    } else {
+                        LOG.error("Target <{}> does not exist", dest.getAbsolutePath());
+                    }
                 } else {
-                    LOG.error("Target <{}> does not exist", dest.getAbsolutePath());
+                    LOG.error("Copy resource to target <{}> failed", dest.getAbsolutePath());
+                }
+                try {
+                    is.close();
+                } catch (IOException ioex) {
+                    LOG.warn("Error in closing input stream", ioex);
                 }
             } else {
-                LOG.error("Copy resource to target <{}> failed", dest.getAbsolutePath());
+                LOG.error("Could not find cwebp platform executable in resources for <{}>", resourceName);
             }
-            try {
-                is.close();
-            } catch (IOException ioex) {
-                LOG.info("Error in closing input stream", ioex);
-            }
-        } else {
-            LOG.error("Could not find cwebp platform executable in resources for <{}>", resourceName);
-        }
+        } catch (NullPointerException ex) {
+            LOG.error(
+                    "Could not find cwebp executable for {} is the correct platform jar included?",
+                    resourceName);
+            throw ex;
 
+        }
 
     }
 

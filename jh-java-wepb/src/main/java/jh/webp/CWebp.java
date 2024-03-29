@@ -3,23 +3,16 @@ package jh.webp;
 
 import jh.webp.process.ProcessLocator;
 import jh.webp.process.webp.DefaultCWepbLocator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 public class CWebp {
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultCWepbLocator.class);
+
     private final StringBuffer command;
     private final ProcessLocator locator;
-
-    public static void main(String[] args) {
-        CWebp cWebp = new CWebp().quality(80)
-                .input("C:/laragon/www/scom/article/1/5/1/151.jpg")
-                .output("C:/laragon/www/scom/article/1/5/1/151.webp");
-
-        System.out.println(cWebp.getCommand());
-
-        cWebp.execute();
-    }
-
 
     public CWebp() {
         this.locator = new DefaultCWepbLocator();
@@ -99,11 +92,15 @@ public class CWebp {
 //            ProcessBuilder processBuilder = new ProcessBuilder(command.toString());
 //            process = processBuilder.start();
 
+            if(LOG.isDebugEnabled())
+                LOG.debug("About to execute {}", command.toString());
+
             process = Runtime.getRuntime().exec(command.toString());
 
 
             int exitCode = process.waitFor();
-            System.out.println("Command exited with code " + exitCode);
+
+            LOG.info("Command exited with code " + exitCode);
 
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
