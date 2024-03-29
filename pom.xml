@@ -35,4 +35,12 @@
         <module>jh-java-wepb-nativebin-win64</module>
         <module>jh-java-wepb-nativebin-linux64</module>
     </modules>
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub JihedHmida Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/JihedHmida/jh-java-wepb</url>
+        </repository>
+    </distributionManagement>
+
 </project>
