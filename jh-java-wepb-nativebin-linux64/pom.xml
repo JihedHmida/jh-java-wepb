@@ -9,6 +9,18 @@
     <name>Java linux 64bit wepb nativebin</name>
     <url>https://github.com/JihedHmida</url>
 
+    <dependencies>
+
+    </dependencies>
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub JihedHmida Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/JihedHmida/jh-java-wepb</url>
+        </repository>
+    </distributionManagement>
+
+
 </project>
 
 

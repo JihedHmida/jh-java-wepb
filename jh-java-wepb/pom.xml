@@ -28,5 +28,13 @@
         <slf4j.version>2.0.12</slf4j.version>
 
     </properties>
+    
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub JihedHmida Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/JihedHmida/jh-java-wepb</url>
+        </repository>
+    </distributionManagement>
 
 </project>
